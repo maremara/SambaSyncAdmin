@@ -27,6 +27,29 @@ if (isLoggedIn()) {
     exit;
 }
 
+
+
+
+$adminId = $_SESSION['admin_id'] ?? null;
+
+if ($adminId !== null) {
+    // Registrar log
+    $stmt = $pdo->prepare("INSERT INTO activity_logs (admin_id, action, ip_address, user_agent, log_time)
+                           VALUES (:admin_id, :action, :ip_address, :user_agent, NOW())");
+    $stmt->execute([
+        ':admin_id' => $adminId,
+        ':action' => $action,
+        ':ip_address' => $_SERVER['REMOTE_ADDR'],
+        ':user_agent' => $_SERVER['HTTP_USER_AGENT']
+    ]);
+} else {
+    error_log('Tentativa de log sem admin_id');
+}
+
+
+
+
+
 $error = '';
 
 // Processar o formulário de login
