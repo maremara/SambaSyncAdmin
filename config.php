@@ -12,17 +12,6 @@
  
 // Iniciar sessão
 // Habilitar output buffering para segurança
-/**
-ob_start();
-
-// Configurações de sessão segura
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_secure', 1);
-ini_set('session.use_strict_mode', 1);
-ini_set('session.cookie_samesite', 'Strict');
-ini_set('session.gc_maxlifetime', 1800); // 30 minutos
-**/
-
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_httponly', 1);
     ini_set('session.cookie_secure', 1);
@@ -48,7 +37,7 @@ $config = [
     'db' => [
         'host' => 'localhost',
         'username' => 'root',
-        'password' => '',
+        'password' => 'Q@f0rc@3$TEJAc0mVC',
         'database' => 'samba_users'
     ],
     'oauth' => [
