@@ -24,7 +24,10 @@ if (session_status() === PHP_SESSION_NONE) {
     error_log('Sessão já foi iniciada. Não foi possível definir novas configurações de sessão.');
 }
 
-session_start();
+// Inicia a sessão se ainda não estiver ativa
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Configuração
 $config = [
