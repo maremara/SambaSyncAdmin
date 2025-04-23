@@ -138,35 +138,27 @@ function verifyCSRFToken($token) {
         throw new Exception("Erro ao conectar ao banco de dados.");
     }
  */
-function logActivity($userId, $action, $description) {
+
+ function logActivity($adminId, $action, $description = null) {
+    if (!$adminId) {
+        error_log("Tentativa de log de atividade com admin_id inválido.");
+        return false;
+    }
+
     try {
         $db = connectDB();
-        
-        $adminId = null;
-        if (isAdmin()) {
-            $adminId = $userId;
-            $userId = null;
-        }
-        
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
-        
-        $stmt = $db->prepare("
-            INSERT INTO activity_logs 
-            (user_id, admin_id, action, description, ip_address, user_agent)
-            VALUES (:user_id, :admin_id, :action, :description, :ip_address, :user_agent)
-        ");
-        
-        $stmt->bindParam(':user_id', $userId);
-        $stmt->bindParam(':admin_id', $adminId);
-        $stmt->bindParam(':action', $action);
-        $stmt->bindParam(':description', $description);
-        $stmt->bindParam(':ip_address', $ip);
-        $stmt->bindParam(':user_agent', $userAgent);
-        
-        return $stmt->execute();
-    } catch (Exception $e) {
-        error_log("Error logging activity: " . $e->getMessage());
+        $stmt = $db->prepare("INSERT INTO activity_logs (admin_id, action, description, ip_address, user_agent, log_time)
+                              VALUES (:admin_id, :action, :description, :ip_address, :user_agent, NOW())");
+        $stmt->execute([
+            ':admin_id'   => $adminId,
+            ':action'     => $action,
+            ':description'=> $description,
+            ':ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+            ':user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN'
+        ]);
+        return true;
+    } catch (PDOException $e) {
+        error_log("Erro ao registrar atividade: " . $e->getMessage());
         return false;
     }
 }

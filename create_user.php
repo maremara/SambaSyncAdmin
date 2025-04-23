@@ -2,7 +2,6 @@
 /**
  * CREATE_USER.PHP - Página para criar novos usuários Samba com validação e segurança
  */
-session_start();
 require_once 'config.php';
 require_once 'functions.php';
 

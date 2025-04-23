@@ -108,11 +108,10 @@ include 'includes/header.php';
 
 <?php include 'includes/footer.php'; ?>
 
+<?php
 /**
  * LOGIN.PHP - P�gina de login
  */
-<?php
-session_start();
 require_once 'config.php';
 require_once 'functions.php';
 
