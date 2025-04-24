@@ -139,6 +139,7 @@ function verifyCSRFToken($token) {
     }
  */
 
+ /**
  function logActivity($adminId, $action, $description = null) {
     if (!$adminId) {
         error_log("Tentativa de log de atividade com admin_id inválido.");
@@ -162,6 +163,18 @@ function verifyCSRFToken($token) {
         return false;
     }
 }
+*/
+
+function logActivity($userId, $action, $description) {
+    $db = connectDB();
+    $stmt = $db->prepare("INSERT INTO logs (user_id, action, description)
+                          VALUES (:user_id, :action, :description)");
+    $stmt->bindParam(':user_id', $userId);
+    $stmt->bindParam(':action', $action);
+    $stmt->bindParam(':description', $description);
+    $stmt->execute();
+}
+
 
 /**
  * Verifica se o usuário está logado
