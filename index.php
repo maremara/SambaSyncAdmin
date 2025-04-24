@@ -77,8 +77,8 @@ include 'includes/header.php';
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Nome de Usu�rio</th>
-                                        <th>A��es</th>
+                                        <th>Nome de Usuário</th>
+                                        <th>Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -110,12 +110,12 @@ include 'includes/header.php';
 
 <?php
 /**
- * LOGIN.PHP - P�gina de login
+ * LOGIN.PHP - Página de login
  */
 require_once 'config.php';
 require_once 'functions.php';
 
-// Verificar se o usu�rio j� est� logado
+// Verificar se o usuário já está logado
 if (isLoggedIn()) {
     header('Location: index.php');
     exit;
@@ -123,7 +123,7 @@ if (isLoggedIn()) {
 
 $error = '';
 
-// Processar o formul�rio de login
+// Processar o formulário de login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['username'] = $user['username'];
             $_SESSION['is_admin'] = true;
             
-            // Atualizar data do �ltimo login
+            // Atualizar data do último login
             $updateStmt = $db->prepare("UPDATE admins SET last_login = NOW() WHERE id = :id");
             $updateStmt->bindParam(':id', $user['id']);
             $updateStmt->execute();
@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Incluir o cabe�alho
+// Incluir o cabeçalho
 include 'includes/header.php';
 include 'includes/footer.php'; ?>
 ?>
@@ -180,7 +180,7 @@ include 'includes/footer.php'; ?>
                     
                     <form method="post" action="">
                         <div class="mb-3">
-                            <label for="username" class="form-label">Nome de Usu�rio</label>
+                            <label for="username" class="form-label">Nome de Usuário</label>
                             <input type="text" class="form-control" id="username" name="username" required>
                         </div>
                         <div class="mb-3">
