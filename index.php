@@ -33,9 +33,7 @@ include 'includes/header.php';
     <h1>Sistema de Gerenciamento de Senhas Samba</h1>
     
     <?php if (isset($error)): ?>
-        
-    <?php endif; ?>
-        echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8');
+        <div class="alert alert-danger"><?php echo $error; ?></div>
     <?php endif; ?>
     
     <div class="row mt-4">
@@ -69,11 +67,11 @@ include 'includes/header.php';
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    Usu�rios Samba
+                    Usuários Samba
                 </div>
                 <div class="card-body">
                     <?php if (empty($users)): ?>
-                        <p>Nenhum usu�rio encontrado.</p>
+                        <p>Nenhum usuário encontrado.</p>
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-striped">
