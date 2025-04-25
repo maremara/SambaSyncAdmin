@@ -172,10 +172,14 @@ function isAdmin() {
  * Força o uso de HTTPS
  */
 function forceHTTPS() {
-    if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') {
-        $redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        header("Location: $redirect");
-        exit;
+    if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
+        if (!headers_sent()) { // Check if headers have already been sent
+            $redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            header("Location: $redirect", true, 302); // Use 302 for temporary redirect during development
+            exit;
+        } else {
+            error_log("Headers already sent, cannot redirect to HTTPS!");
+        }
     }
 }
 
