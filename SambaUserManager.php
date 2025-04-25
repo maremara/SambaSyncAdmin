@@ -16,16 +16,16 @@ class SambaUserManager {
      * Executes a command on the remote Samba server via SSH.
      *
      * @param string $command The command to execute.
-     * @return array The output of the command, or an empty array on failure.
+     * @return array The output of the command.
      * @throws Exception If there is an error connecting or executing the command.
      */
     private function executeSambaCommand($command) {
-        $connection = @ssh2_connect($this->config['samba']['host'], 22); // Using @ to suppress warnings
+        $connection = ssh2_connect($this->config['samba']['host'], 22);
         if (!$connection) {
             throw new Exception("Não foi possível conectar ao servidor Samba via SSH: {$this->config['samba']['host']}");
         }
 
-        $authResult = @ssh2_auth_password(
+        $authResult = ssh2_auth_password(
             $connection,
             $this->config['samba']['admin_user'],
             $this->config['samba']['admin_password']
@@ -34,7 +34,7 @@ class SambaUserManager {
             throw new Exception("Falha na autenticação SSH para o usuário: {$this->config['samba']['admin_user']} no host: {$this->config['samba']['host']}");
         }
 
-        $stream = @ssh2_exec($connection, $command); // Using @ to suppress warnings
+        $stream = ssh2_exec($connection, $command);
         if (!$stream) {
             throw new Exception("Falha ao executar o comando SSH: $command no host: {$this->config['samba']['host']}");
         }
@@ -46,7 +46,7 @@ class SambaUserManager {
             stream_set_blocking($errorStream, true);
             $errorOutput = stream_get_contents($errorStream);
             if (!empty($errorOutput)) {
-                error_log("Erro do servidor Samba: $errorOutput"); // Log the error
+                throw new Exception("Erro do servidor Samba: $errorOutput");
             }
             fclose($errorStream);
         }
@@ -61,7 +61,7 @@ class SambaUserManager {
         // Basic error checking (improve as needed)
         foreach ($output as $line) {
             if (stripos($line, 'error') !== false || stripos($line, 'failed') !== false) {
-                error_log("Possível erro no comando Samba: $line");
+                throw new Exception("Possível erro no comando Samba: $line");
             }
         }
 
@@ -78,9 +78,15 @@ class SambaUserManager {
      */
     public function userExists($username) {
         try {
-            $command = "pdbedit -L | grep -i \"^{$username}:\"";
+            // Use pdbedit -L and exact match for username ignoring case
+            $command = "pdbedit -L";
             $output = $this->executeSambaCommand($command);
-            return !empty($output);
+            foreach ($output as $line) {
+                if (stripos($line, $username . ':') === 0) {
+                    return true;
+                }
+            }
+            return false;
         } catch (Exception $e) {
             error_log("Erro ao verificar se o usuário existe: " . $e->getMessage());
             return false;
@@ -104,7 +110,7 @@ class SambaUserManager {
 
         // Create the user in the system (Linux)
         try {
-            $addUserCommand = "sudo useradd -m -s /bin/bash {$username}";
+            $addUserCommand = "sudo useradd -m -s /bin/bash " . escapeshellarg($username);
             $this->executeSambaCommand($addUserCommand);
         } catch (Exception $e) {
             throw new Exception("Erro ao criar usuário no sistema: " . $e->getMessage());
@@ -112,28 +118,28 @@ class SambaUserManager {
 
         // Set the user's password in the system
         try {
-            $setUnixPasswordCmd = "echo \"{$username}:{$password}\" | sudo chpasswd";
+            $setUnixPasswordCmd = "echo " . escapeshellarg("{$username}:{$password}") . " | sudo chpasswd";
             $this->executeSambaCommand($setUnixPasswordCmd);
         } catch (Exception $e) {
             // If setting the Unix password fails, you might want to delete the user
-            $this->executeSambaCommand("sudo userdel -f $username");
+            $this->executeSambaCommand("sudo userdel -f " . escapeshellarg($username));
             throw new Exception("Erro ao definir a senha do usuário no sistema: " . $e->getMessage());
         }
 
         // Add the user to Samba
         try {
-            $addSambaCommand = "echo -ne '{$password}\n{$password}\n' | sudo smbpasswd -a {$username}";
+            $addSambaCommand = "echo -ne " . escapeshellarg("{$password}\n{$password}\n") . " | sudo smbpasswd -a " . escapeshellarg($username);
             $this->executeSambaCommand($addSambaCommand);
         } catch (Exception $e) {
             // Cleanup if Samba user creation fails
-            $this->executeSambaCommand("sudo userdel -f $username");
-            $this->executeSambaCommand("sudo smbpasswd -x $username");
+            $this->executeSambaCommand("sudo userdel -f " . escapeshellarg($username));
+            $this->executeSambaCommand("sudo smbpasswd -x " . escapeshellarg($username));
             throw new Exception("Erro ao adicionar usuário ao Samba: " . $e->getMessage());
         }
 
         // Enable the user in Samba
         try {
-            $enableCommand = "sudo smbpasswd -e {$username}";
+            $enableCommand = "sudo smbpasswd -e " . escapeshellarg($username);
             $this->executeSambaCommand($enableCommand);
         } catch (Exception $e) {
             throw new Exception("Erro ao habilitar usuário no Samba: " . $e->getMessage());
@@ -155,7 +161,7 @@ class SambaUserManager {
             throw new Exception("Usuário '{$username}' não existe no servidor Samba");
         }
 
-        $command = "sudo pdbedit -L -v {$username}";
+        $command = "sudo pdbedit -L -v " . escapeshellarg($username);
         $output = $this->executeSambaCommand($command);
 
         $userInfo = [];
@@ -184,7 +190,7 @@ class SambaUserManager {
 
         // Change password in the system
         try {
-            $changeUnixPasswordCmd = "echo \"{$username}:{$newPassword}\" | sudo chpasswd";
+            $changeUnixPasswordCmd = "echo " . escapeshellarg("{$username}:{$newPassword}") . " | sudo chpasswd";
             $this->executeSambaCommand($changeUnixPasswordCmd);
         } catch (Exception $e) {
             throw new Exception("Erro ao alterar a senha do usuário no sistema: " . $e->getMessage());
@@ -192,7 +198,7 @@ class SambaUserManager {
 
         // Change password in Samba
         try {
-            $changeSambaPasswordCmd = "echo -ne '{$newPassword}\n{$newPassword}\n' | sudo smbpasswd {$username}";
+            $changeSambaPasswordCmd = "echo -ne " . escapeshellarg("{$newPassword}\n{$newPassword}\n") . " | sudo smbpasswd " . escapeshellarg($username);
             $this->executeSambaCommand($changeSambaPasswordCmd);
         } catch (Exception $e) {
             throw new Exception("Erro ao alterar a senha do usuário no Samba: " . $e->getMessage());
