@@ -139,32 +139,6 @@ function verifyCSRFToken($token) {
     }
  */
 
- /**
- function logActivity($adminId, $action, $description = null) {
-    if (!$adminId) {
-        error_log("Tentativa de log de atividade com admin_id inválido.");
-        return false;
-    }
-
-    try {
-        $db = connectDB();
-        $stmt = $db->prepare("INSERT INTO activity_logs (admin_id, action, description, ip_address, user_agent, log_time)
-                              VALUES (:admin_id, :action, :description, :ip_address, :user_agent, NOW())");
-        $stmt->execute([
-            ':admin_id'   => $adminId,
-            ':action'     => $action,
-            ':description'=> $description,
-            ':ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
-            ':user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN'
-        ]);
-        return true;
-    } catch (PDOException $e) {
-        error_log("Erro ao registrar atividade: " . $e->getMessage());
-        return false;
-    }
-}
-*/
-
 function logActivity($userId, $action, $description) {
     $db = connectDB();
     $stmt = $db->prepare("INSERT INTO logs (user_id, action, description)
