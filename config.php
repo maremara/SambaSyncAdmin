@@ -121,17 +121,14 @@ class SambaUserManager {
     
     /**
      * Cria um novo usuário no Samba
-    public function createUser($username, $password) {
+     */
+    public function createUser($username, $password, $fullName = '', $email = '') {
         if ($this->userExists($username)) {
             throw new Exception("Usuário '{$username}' já existe no servidor Samba");
         }
         
         // Comando para adicionar usuário ao sistema Unix primeiro (necessário para Samba)
         $addUserCommand = "useradd -m -s /bin/bash {$username}";
-        $this->executeSambaCommand($addUserCommand);
-        
-        // Optionally log the creation of the user
-        error_log("User '{$username}' created successfully.");
         $this->executeSambaCommand($addUserCommand);
         
         // Definir senha no sistema Unix
@@ -145,6 +142,8 @@ class SambaUserManager {
         // Habilitar usuário no Samba
         $enableCommand = "smbpasswd -e {$username}";
         $this->executeSambaCommand($enableCommand);
+        
+        // Optionally, you can store fullName and email in a database or Samba user info if needed
         
         return true;
     }
