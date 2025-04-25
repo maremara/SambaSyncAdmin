@@ -48,14 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 regenerateSession();
 
                 // Armazenar sessão
-                $_SESSION['admin_id'] = $user['id'];
+                $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['is_admin'] = true;
                 $_SESSION['last_activity'] = time();
-                logActivity($user['username'], 'login');
-                header('Location: index.php');
-            exit;
-
 
                 // Atualiza último login (certifique-se de que a coluna existe)
                 $updateStmt = $db->prepare("UPDATE admins SET last_login = NOW() WHERE id = :id");
