@@ -9,9 +9,7 @@
  * - Importar dados de usuários de serviços externos (Facebook, Instagram, Gmail, Hotmail)
  */
 
- 
-// Iniciar sessão
-// Habilitar output buffering para segurança
+// Iniciar sessão (apenas uma vez, após configurar as opções)
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_httponly', 1);
     ini_set('session.cookie_secure', 1);
@@ -20,13 +18,8 @@ if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.gc_maxlifetime', 1800); // 30 minutos
     session_start();
 } else {
-    // A sessão já foi iniciada, não é possível mudar as configurações
-    error_log('Sessão já foi iniciada. Não foi possível definir novas configurações de sessão.');
-}
-
-// Inicia a sessão se ainda não estiver ativa
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    // Log a message if a session was already started elsewhere
+    error_log('Sessão já estava ativa quando config.php foi incluído.');
 }
 
 // Configuração
