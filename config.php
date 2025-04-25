@@ -32,10 +32,10 @@ if (session_status() === PHP_SESSION_NONE) {
 // Configuração
 $config = [
     'samba' => [
-        'host' => 'localhost',
-        'admin_user' => 'root',
-        'admin_password' => getenv('SAMBA_ADMIN_PASSWORD') ?: 'default_password',
-        'domain' => 'EXEMPLO.LOCAL',
+        'host' => '10.5.24.27', // Altere para o IP do servidor Samba
+        'admin_user' => 'root',      // Usuário com permissão para executar comandos Samba
+        'admin_password' => 'Q@f0rc@3$TEJAc0mVC',   // Senha do usuário SSH ou chave SSH (recomendado)
+        'domain' => 'AMAN.EB.MIL.BR',
     ],
     'db' => [
         'host' => 'localhost',
