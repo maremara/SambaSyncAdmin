@@ -33,7 +33,9 @@ include 'includes/header.php';
     <h1>Sistema de Gerenciamento de Senhas Samba</h1>
     
     <?php if (isset($error)): ?>
-        <div class="alert alert-danger"><?php echo $error; ?></div>
+        
+    <?php endif; ?>
+        echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8');
     <?php endif; ?>
     
     <div class="row mt-4">
@@ -156,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: index.php');
             exit;
         } else {
-            $error = 'Nome de usu�rio ou senha incorretos.';
+            $error = 'Nome de usuário ou senha incorretos.';
         }
     }
 }

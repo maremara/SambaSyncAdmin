@@ -34,92 +34,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $username = sanitizeInput($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';
 
-        if (empty($username) || empty($password)) {
-            $error = 'Preencha todos os campos.';
-        } else {
+        if ($username && $password) {
             $db = connectDB();
-            $stmt = $db->prepare("SELECT id, username, password FROM admins WHERE username = :username");
-            $stmt->bindParam(':username', $username);
-            $stmt->execute();
-
+            $stmt = $db->prepare('SELECT * FROM users WHERE username = ?');
+            $stmt->execute([$username]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && verifyPassword($password, $user['password'])) {
                 regenerateSession();
-
-                // Armazenar sessão
-                $_SESSION['admin_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['is_admin'] = true;
-                $_SESSION['last_activity'] = time();
-
-                // Atualiza último login (certifique-se de que a coluna existe)
-                $updateStmt = $db->prepare("UPDATE admins SET last_login = NOW() WHERE id = :id");
-                $updateStmt->bindParam(':id', $user['id']);
-                $updateStmt->execute();
-
-                // Registrar log de login
-                logActivity($user['id'], 'login', 'Login bem-sucedido');
-
+                $_SESSION['user'] = $user['username'];
+                $_SESSION['is_admin'] = $user['is_admin'];
+                logActivity("Login bem-sucedido para usuário: $username");
                 header('Location: index.php');
                 exit;
             } else {
-                sleep(1);
-                $error = 'Nome de usuário ou senha incorretos.';
-                logActivity(null, 'failed_login', "Tentativa de login com usuário: {$username}");
+                $error = 'Usuário ou senha inválidos.';
+                logActivity("Falha no login para usuário: $username");
             }
+        } else {
+            $error = 'Preencha todos os campos.';
         }
     }
 }
 
-// Gera CSRF token
-$csrfToken = generateCSRFToken();
-
-include 'includes/header.php';
+// Gerar token CSRF
+$csrf_token = generateCSRFToken();
 ?>
 
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Gerenciador Samba</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+</head>
+<body>
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="text-center mb-0">Login do Administrador</h4>
-                </div>
-                <div class="card-body">
-                    <?php if (!empty($error)): ?>
-                        <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
-                    <?php endif; ?>
+    <h2>Login</h2>
 
-                    <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-                        <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+    <?php if (!empty($error)): ?>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></div>
+    <?php endif; ?>
 
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Nome de Usuário</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="text" class="form-control" id="username" name="username" required 
-                                       value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Senha</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-sign-in-alt"></i> Entrar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <form method="POST" action="">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+        <div class="mb-3">
+            <label for="username" class="form-label">Usuário</label>
+            <input type="text" class="form-control" name="username" id="username" required>
         </div>
-    </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Senha</label>
+            <input type="password" class="form-control" name="password" id="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
 </div>
-
-<?php include 'includes/footer.php'; ?>
+</body>
+</html>
