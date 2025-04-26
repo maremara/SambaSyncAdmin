@@ -13,11 +13,11 @@
 ob_start();
 
 // Configurações de sessão segura
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_secure', 1);
-ini_set('session.use_strict_mode', 1);
-ini_set('session.cookie_samesite', 'Strict');
-ini_set('session.gc_maxlifetime', 1800); // 30 minutos
+// ini_set('session.cookie_httponly', 1);
+// ini_set('session.cookie_secure', 1);
+// ini_set('session.use_strict_mode', 1);
+// ini_set('session.cookie_samesite', 'Strict');
+// ini_set('session.gc_maxlifetime', 1800); // 30 minutos
 
 // Configuração
 $config = [
