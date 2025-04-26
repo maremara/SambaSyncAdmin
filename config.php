@@ -9,6 +9,7 @@
  * - Importar dados de usuários de serviços externos (Facebook, Instagram, Gmail, Hotmail)
  */
 
+<<<<<<< HEAD
 // Habilitar output buffering para segurança
 ob_start();
 
@@ -18,19 +19,33 @@ ob_start();
 // ini_set('session.use_strict_mode', 1);
 // ini_set('session.cookie_samesite', 'Strict');
 // ini_set('session.gc_maxlifetime', 1800); // 30 minutos
+=======
+// Iniciar sessão (apenas uma vez, após configurar as opções)
+if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.cookie_secure', 1);
+    ini_set('session.use_strict_mode', 1);
+    ini_set('session.cookie_samesite', 'Strict');
+    ini_set('session.gc_maxlifetime', 1800); // 30 minutos
+    session_start();
+} else {
+    // Log a message if a session was already started elsewhere
+    error_log('Sessão já estava ativa quando config.php foi incluído.');
+}
+>>>>>>> 8495b6eeeb51bb88eaf8b10d8bcb68a6480c358e
 
 // Configuração
 $config = [
     'samba' => [
-        'host' => 'localhost',
-        'admin_user' => 'root',
-        'admin_password' => getenv('SAMBA_ADMIN_PASSWORD') ?: 'default_password',
-        'domain' => 'EXEMPLO.LOCAL',
+        'host' => '10.5.24.27', // Altere para o IP do servidor Samba
+        'admin_user' => 'root',      // Usuário com permissão para executar comandos Samba
+        'admin_password' => 'Q@f0rc@3$TEJAc0mVC',   // Senha do usuário SSH ou chave SSH (recomendado)
+        'domain' => 'AMAN.EB.MIL.BR',
     ],
     'db' => [
         'host' => 'localhost',
         'username' => 'root',
-        'password' => '',
+        'password' => 'Q@f0rc@3$TEJAc0mVC',
         'database' => 'samba_users'
     ],
     'oauth' => [
@@ -111,17 +126,14 @@ class SambaUserManager {
     
     /**
      * Cria um novo usuário no Samba
-    public function createUser($username, $password) {
+     */
+    public function createUser($username, $password, $fullName = '', $email = '') {
         if ($this->userExists($username)) {
             throw new Exception("Usuário '{$username}' já existe no servidor Samba");
         }
         
         // Comando para adicionar usuário ao sistema Unix primeiro (necessário para Samba)
         $addUserCommand = "useradd -m -s /bin/bash {$username}";
-        $this->executeSambaCommand($addUserCommand);
-        
-        // Optionally log the creation of the user
-        error_log("User '{$username}' created successfully.");
         $this->executeSambaCommand($addUserCommand);
         
         // Definir senha no sistema Unix
@@ -135,6 +147,8 @@ class SambaUserManager {
         // Habilitar usuário no Samba
         $enableCommand = "smbpasswd -e {$username}";
         $this->executeSambaCommand($enableCommand);
+        
+        // Optionally, you can store fullName and email in a database or Samba user info if needed
         
         return true;
     }

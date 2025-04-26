@@ -138,38 +138,17 @@ function verifyCSRFToken($token) {
         throw new Exception("Erro ao conectar ao banco de dados.");
     }
  */
+
 function logActivity($userId, $action, $description) {
-    try {
-        $db = connectDB();
-        
-        $adminId = null;
-        if (isAdmin()) {
-            $adminId = $userId;
-            $userId = null;
-        }
-        
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
-        
-        $stmt = $db->prepare("
-            INSERT INTO activity_logs 
-            (user_id, admin_id, action, description, ip_address, user_agent)
-            VALUES (:user_id, :admin_id, :action, :description, :ip_address, :user_agent)
-        ");
-        
-        $stmt->bindParam(':user_id', $userId);
-        $stmt->bindParam(':admin_id', $adminId);
-        $stmt->bindParam(':action', $action);
-        $stmt->bindParam(':description', $description);
-        $stmt->bindParam(':ip_address', $ip);
-        $stmt->bindParam(':user_agent', $userAgent);
-        
-        return $stmt->execute();
-    } catch (Exception $e) {
-        error_log("Error logging activity: " . $e->getMessage());
-        return false;
-    }
+    $db = connectDB();
+    $stmt = $db->prepare("INSERT INTO logs (user_id, action, description)
+                          VALUES (:user_id, :action, :description)");
+    $stmt->bindParam(':user_id', $userId);
+    $stmt->bindParam(':action', $action);
+    $stmt->bindParam(':description', $description);
+    $stmt->execute();
 }
+
 
 /**
  * Verifica se o usuário está logado
@@ -193,10 +172,14 @@ function isAdmin() {
  * Força o uso de HTTPS
  */
 function forceHTTPS() {
-    if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') {
-        $redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        header("Location: $redirect");
-        exit;
+    if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
+        if (!headers_sent()) { // Check if headers have already been sent
+            $redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            header("Location: $redirect", true, 302); // Use 302 for temporary redirect during development
+            exit;
+        } else {
+            error_log("Headers already sent, cannot redirect to HTTPS!");
+        }
     }
 }
 
