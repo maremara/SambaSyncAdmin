@@ -2,8 +2,8 @@
 /**
  * LOGIN.PHP - Página de login
  */
-require_once 'config.php';
-require_once 'functions.php';
+require_once '../config/config.php';
+require_once '../utils/functions.php';
 
 // Verificar se o usuário já está logado
 if (isLoggedIn()) {
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Incluir o cabeçalho
-include 'includes/header.php';
+include '../views/header.php';
 ?>
 
 <div class="container mt-5">
@@ -86,4 +86,4 @@ include 'includes/header.php';
     </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../views/footer.php'; ?>
