@@ -25,32 +25,32 @@ if (session_status() === PHP_SESSION_NONE) {
 // Configuração
 $config = [
     'samba' => [
-        'host' => '10.5.24.27', // Altere para o IP do servidor Samba
-        'admin_user' => 'root',      // Usuário com permissão para executar comandos Samba
-        'admin_password' => 'Q@f0rc@3$TEJAc0mVC',   // Senha do usuário SSH ou chave SSH (recomendado)
-        'domain' => 'AMAN.EB.MIL.BR',
+        'host' => getenv('SAMBA_HOST'),
+        'admin_user' => getenv('SAMBA_ADMIN_USER'),
+        'admin_password' => getenv('SAMBA_ADMIN_PASSWORD'),
+        'domain' => getenv('SAMBA_DOMAIN'),
     ],
     'db' => [
-        'host' => 'localhost',
-        'username' => 'root',
-        'password' => 'Q@f0rc@3$TEJAc0mVC',
-        'database' => 'samba_users'
+        'host' => getenv('DB_HOST'),
+        'username' => getenv('DB_USERNAME'),
+        'password' => getenv('DB_PASSWORD'),
+        'database' => getenv('DB_DATABASE'),
     ],
     'oauth' => [
         'facebook' => [
-            'app_id' => 'seu_app_id_facebook',
-            'app_secret' => 'seu_app_secret_facebook',
-            'redirect_uri' => 'https://seu-site.com/oauth/facebook_callback.php',
+            'app_id' => getenv('FACEBOOK_APP_ID'),
+            'app_secret' => getenv('FACEBOOK_APP_SECRET'),
+            'redirect_uri' => getenv('FACEBOOK_REDIRECT_URI'),
         ],
         'google' => [
-            'client_id' => 'seu_client_id_google',
-            'client_secret' => 'seu_client_secret_google',
-            'redirect_uri' => 'https://seu-site.com/oauth/google_callback.php',
+            'client_id' => getenv('GOOGLE_CLIENT_ID'),
+            'client_secret' => getenv('GOOGLE_CLIENT_SECRET'),
+            'redirect_uri' => getenv('GOOGLE_REDIRECT_URI'),
         ],
         'microsoft' => [
-            'client_id' => 'seu_client_id_microsoft',
-            'client_secret' => 'seu_client_secret_microsoft',
-            'redirect_uri' => 'https://seu-site.com/oauth/microsoft_callback.php',
+            'client_id' => getenv('MICROSOFT_CLIENT_ID'),
+            'client_secret' => getenv('MICROSOFT_CLIENT_SECRET'),
+            'redirect_uri' => getenv('MICROSOFT_REDIRECT_URI'),
         ],
     ]
 ];
