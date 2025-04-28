@@ -3,8 +3,8 @@
  * INDEX.PHP - Pagina inicial do sistema
  */
 session_start();
-require_once 'src/config/config.php';
-require_once 'src/utils/functions.php';
+require_once '../src/config/config.php';
+require_once '..src/utils/functions.php';
 
 // Verificar se o usuario esta logado
 if (!isLoggedIn()) {
@@ -26,7 +26,7 @@ if (isAdmin()) {
 }
 
 // Incluir o cabecalho
-include 'includes/header.php';
+include '../includes/header.php';
 ?>
 
 <div class="container mt-4">
@@ -106,4 +106,4 @@ include 'includes/header.php';
     </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
