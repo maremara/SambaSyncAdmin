@@ -2,7 +2,6 @@
 /**
  * INDEX.PHP - Pagina inicial do sistema
  */
-session_start();
 require_once '../src/config/config.php';
 require_once '../src/utils/functions.php';
 
