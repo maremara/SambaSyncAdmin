@@ -3,8 +3,8 @@
  * INDEX.PHP - Pagina inicial do sistema
  */
 session_start();
-require_once 'config.php';
-require_once 'functions.php';
+require_once 'src/config.php';
+require_once 'utils/functions.php';
 
 // Verificar se o usuario esta logado
 if (!isLoggedIn()) {
