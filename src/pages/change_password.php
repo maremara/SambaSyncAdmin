@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Verify current password from database
             try {
                 $db = connectDB();
-                $stmt = $db->prepare('SELECT password FROM users WHERE username = :username');
+                $stmt = $db->prepare('SELECT password FROM samba_users WHERE username = :username');
                 $stmt->bindParam(':username', $username);
                 $stmt->execute();
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     // Update password hash in database
                     $new_hash = hashPassword($new_password);
-                    $updateStmt = $db->prepare('UPDATE users SET password = :password WHERE username = :username');
+                    $updateStmt = $db->prepare('UPDATE samba_users SET password = :password WHERE username = :username');
                     $updateStmt->bindParam(':password', $new_hash);
                     $updateStmt->bindParam(':username', $username);
                     $updateStmt->execute();
