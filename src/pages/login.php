@@ -2,8 +2,8 @@
 /**
  * LOGIN.PHP - Página de login
  */
-require_once '../config/config.php';
-require_once '../utils/functions.php';
+require_once '../src/config/config.php';
+require_once '../src/utils/functions.php';
 
 // Verificar se o usuário já está logado
 if (isLoggedIn()) {
