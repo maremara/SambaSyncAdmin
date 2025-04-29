@@ -7,7 +7,7 @@ require_once '../src/utils/functions.php';
 
 // Verificar se o usuario esta logado
 if (!isLoggedIn()) {
-    header('Location: login.php');
+    header('Location: ../src/views/login.php');
     exit;
 }
 
