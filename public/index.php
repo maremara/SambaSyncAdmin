@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 /**
  * INDEX.PHP - Pagina inicial do sistema
@@ -8,7 +7,7 @@ require_once '../src/utils/functions.php';
 
 // Verificar se o usuario esta logado
 if (!isLoggedIn()) {
-    header('Location: ../src/views/login.php');
+    header('Location: login.php');
     exit;
 }
 
