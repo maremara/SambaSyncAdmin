@@ -9,9 +9,9 @@
             "type": "chrome",
             "request": "launch",
             "name": "Iniciar o Chrome em relação a localhost",
-            "url": "http://localhost:8080",
+            "url": "https://localhost:443",
         //    "webRoot": "${workspaceFolder}"
-            "webRoot": "F:\php\public"
+            "webRoot": "F:\SambaSyncAdmin"
             
         }
     ]
