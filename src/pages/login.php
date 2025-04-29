@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Incluir o cabeçalho
-include '../views/header.php';
+include '../src/views/header.php';
 ?>
 
 <div class="container mt-5">
@@ -86,4 +86,4 @@ include '../views/header.php';
     </div>
 </div>
 
-<?php include '../views/footer.php'; ?>
+<?php include '../src/views/footer.php'; ?>
