@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 /**
  * INDEX.PHP - Pagina inicial do sistema
