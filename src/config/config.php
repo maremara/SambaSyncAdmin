@@ -11,9 +11,12 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+use Dotenv\Dotenv;
+
 // Carregar variáveis do arquivo .env
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
+
 
 // Enable error reporting for debugging
 ini_set('display_errors', 1);

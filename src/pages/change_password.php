@@ -1,77 +1,12 @@
 <?php
-/**
- * CHANGE_PASSWORD.PHP - Page to change user passwords securely
- */
-session_start();
-require_once 'config.php';
-require_once 'functions.php';
+require_once __DIR__ . '/../controllers/ChangePasswordController.php';
 
-// Check if user is logged in
-if (!isLoggedIn()) {
-    header('Location: login.php');
-    exit;
-}
+$controller = new ChangePasswordController();
+$controller->handleRequest();
 
-$message = '';
-$error = '';
-
-// Process form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate CSRF token
-    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
-        $error = 'Invalid CSRF token. Please try again.';
-    } else {
-        // Sanitize inputs
-        $username = sanitizeInput($_POST['username'] ?? '');
-        $current_password = $_POST['current_password'] ?? '';
-        $new_password = $_POST['new_password'] ?? '';
-        $confirm_password = $_POST['confirm_password'] ?? '';
-
-        // Validate username format
-        if (!validateUsername($username)) {
-            $error = 'Invalid username format. Use only lowercase letters, numbers, and underscores (3-20 characters).';
-        }
-        // Validate new password strength
-        elseif (!validatePassword($new_password)) {
-            $error = 'New password must be at least 8 characters long and include uppercase, lowercase letters, and numbers.';
-        }
-        // Check new password confirmation
-        elseif ($new_password !== $confirm_password) {
-            $error = 'New password and confirmation do not match.';
-        } else {
-            // Verify current password from database
-            try {
-                $db = connectDB();
-                $stmt = $db->prepare('SELECT password FROM samba_users WHERE username = :username');
-                $stmt->bindParam(':username', $username);
-                $stmt->execute();
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                if (!$user) {
-                    $error = 'User not found.';
-                } elseif (!verifyPassword($current_password, $user['password'])) {
-                    $error = 'Current password is incorrect.';
-                } else {
-                    // Update password hash in database
-                    $new_hash = hashPassword($new_password);
-                    $updateStmt = $db->prepare('UPDATE samba_users SET password = :password WHERE username = :username');
-                    $updateStmt->bindParam(':password', $new_hash);
-                    $updateStmt->bindParam(':username', $username);
-                    $updateStmt->execute();
-
-                    $message = 'Password changed successfully.';
-                    logActivity($_SESSION['user_id'], 'change_password', "Password changed for user $username");
-                }
-            } catch (PDOException $e) {
-                $error = 'Database error: ' . htmlspecialchars($e->getMessage());
-            }
-        }
-    }
-}
-
-// Generate CSRF token for the form
 $csrf_token = generateCSRFToken();
-
+$message = $controller->getMessage();
+$error = $controller->getError();
 ?>
 
 <!DOCTYPE html>
@@ -82,7 +17,7 @@ $csrf_token = generateCSRFToken();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<?php include 'includes/header.php'; ?>
+<?php include '../views/header.php'; ?>
 
 <div class="container mt-5">
     <h2>Alterar Senha</h2>
@@ -128,6 +63,6 @@ $csrf_token = generateCSRFToken();
     </form>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../views/footer.php'; ?>
 </body>
 </html>
