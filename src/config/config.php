@@ -36,10 +36,10 @@ $config = [
         'domain' => getenv('SAMBA_DOMAIN'),
     ],
     'db' => [
-        'host' => getenv('DB_HOST'),
-        'username' => getenv('DB_USERNAME'),
-        'password' => getenv('DB_PASSWORD'),
-        'database' => getenv('DB_DATABASE'),
+        'host' => (getenv('DB_HOST') && getenv('DB_HOST') !== 'localhost') ? getenv('DB_HOST') : '127.0.0.1',
+        'username' => getenv('DB_USERNAME') ?: 'root',
+        'password' => getenv('DB_PASSWORD') ?: '',
+        'database' => getenv('DB_DATABASE') ?: 'samba',
     ],
     'oauth' => [
         'facebook' => [
