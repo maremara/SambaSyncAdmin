@@ -6,6 +6,11 @@ require_once '../src/config/config.php';
 require_once '../src/utils/functions.php';
 require_once '../src/models/SambaUserManager.php'; // Added this line to include SambaUserManager class
 
+// Debug: log Samba config values
+error_log('Samba Host: ' . ($config['samba']['host'] ?? 'not set'));
+error_log('Samba Admin User: ' . ($config['samba']['admin_user'] ?? 'not set'));
+error_log('Samba Admin Password: ' . (empty($config['samba']['admin_password']) ? 'not set or empty' : 'set'));
+
 // Verificar se o usuario esta logado
 if (!isLoggedIn()) {
     header('Location: login.php');
