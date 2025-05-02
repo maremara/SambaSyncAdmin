@@ -31,7 +31,7 @@ if (isAdmin()) {
 }
 
 // Incluir o cabecalho
-include '../includes/header.php';
+include '../src/views/header.php';
 ?>
 
 <div class="container mt-4">
