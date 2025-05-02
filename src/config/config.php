@@ -13,10 +13,17 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Dotenv\Dotenv;
 
-// Carregar variáveis do arquivo .env
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
-$dotenv->load();
-
+/**
+ * Load environment variables from .env file
+ * Added check to ensure .env file exists to avoid errors
+ */
+$envPath = __DIR__ . '/../../.env';
+if (file_exists($envPath)) {
+    $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+    $dotenv->load();
+} else {
+    error_log('.env file not found at ' . $envPath);
+}
 
 // Enable error reporting for debugging
 ini_set('display_errors', 1);
@@ -39,32 +46,32 @@ if (session_status() === PHP_SESSION_NONE) {
 // Configuração
 $config = [
     'samba' => [
-        'host' => $_ENV['SAMBA_HOST'],
-        'admin_user' => $_ENV['SAMBA_ADMIN_USER'],
-        'admin_password' => $_ENV['SAMBA_ADMIN_PASSWORD'],
-        'domain' => $_ENV['SAMBA_DOMAIN'],
+        'host' => $_ENV['SAMBA_HOST'] ?? '',
+        'admin_user' => $_ENV['SAMBA_ADMIN_USER'] ?? '',
+        'admin_password' => $_ENV['SAMBA_ADMIN_PASSWORD'] ?? '',
+        'domain' => $_ENV['SAMBA_DOMAIN'] ?? '',
     ],
     'db' => [
-        'host' => ($_ENV['DB_HOST'] && $_ENV['DB_HOST'] !== 'localhost') ? $_ENV['DB_HOST'] : '127.0.0.1',
-        'username' => $_ENV['DB_USERNAME'] ?: 'root',
-        'password' => $_ENV['DB_PASSWORD'] ?: '',
-        'database' => $_ENV['DB_DATABASE'] ?: 'samba',
+        'host' => ($_ENV['DB_HOST'] ?? '') && ($_ENV['DB_HOST'] !== 'localhost') ? $_ENV['DB_HOST'] : '127.0.0.1',
+        'username' => $_ENV['DB_USERNAME'] ?? 'root',
+        'password' => $_ENV['DB_PASSWORD'] ?? '',
+        'database' => $_ENV['DB_DATABASE'] ?? 'samba',
     ],
     'oauth' => [
         'facebook' => [
-            'app_id' => $_ENV['FACEBOOK_APP_ID'],
-            'app_secret' => $_ENV['FACEBOOK_APP_SECRET'],
-            'redirect_uri' => $_ENV['FACEBOOK_REDIRECT_URI'],
+            'app_id' => $_ENV['FACEBOOK_APP_ID'] ?? '',
+            'app_secret' => $_ENV['FACEBOOK_APP_SECRET'] ?? '',
+            'redirect_uri' => $_ENV['FACEBOOK_REDIRECT_URI'] ?? '',
         ],
         'google' => [
-            'client_id' => $_ENV['GOOGLE_CLIENT_ID'],
-            'client_secret' => $_ENV['GOOGLE_CLIENT_SECRET'],
-            'redirect_uri' => $_ENV['GOOGLE_REDIRECT_URI'],
+            'client_id' => $_ENV['GOOGLE_CLIENT_ID'] ?? '',
+            'client_secret' => $_ENV['GOOGLE_CLIENT_SECRET'] ?? '',
+            'redirect_uri' => $_ENV['GOOGLE_REDIRECT_URI'] ?? '',
         ],
         'microsoft' => [
-            'client_id' => $_ENV['MICROSOFT_CLIENT_ID'],
-            'client_secret' => $_ENV['MICROSOFT_CLIENT_SECRET'],
-            'redirect_uri' => $_ENV['MICROSOFT_REDIRECT_URI'],
+            'client_id' => $_ENV['MICROSOFT_CLIENT_ID'] ?? '',
+            'client_secret' => $_ENV['MICROSOFT_CLIENT_SECRET'] ?? '',
+            'redirect_uri' => $_ENV['MICROSOFT_REDIRECT_URI'] ?? '',
         ],
     ]
 ];
