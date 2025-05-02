@@ -222,6 +222,7 @@ include '../includes/header.php';
  */
 require_once '../src/config/config.php';
 require_once '../src/utils/functions.php';
+require_once '../src/models/SambaUserManager.php'; // Added this line to include SambaUserManager class
 
 // Verificar se o usuario esta logado
 if (!isLoggedIn()) {
