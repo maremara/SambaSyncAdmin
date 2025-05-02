@@ -111,4 +111,4 @@ include '../src/views/header.php';
     </div>
 </div>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../src/views/footer.php'; ?>
