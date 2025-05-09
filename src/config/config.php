@@ -47,6 +47,8 @@ if (session_status() === PHP_SESSION_NONE) {
 $config = [
     'samba' => [
         'host' => $_ENV['SAMBA_HOST'] ?? '',
+        'ssh_user' => $_ENV['SAMBA_SSH_USER'] ?? '',
+        'ssh_password' => $_ENV['SAMBA_SSH_PASSWORD'] ?? '',
         'admin_user' => $_ENV['SAMBA_ADMIN_USER'] ?? '',
         'admin_password' => $_ENV['SAMBA_ADMIN_PASSWORD'] ?? '',
         'domain' => $_ENV['SAMBA_DOMAIN'] ?? '',

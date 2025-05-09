@@ -27,11 +27,11 @@ class SambaUserManager {
 
         $authResult = ssh2_auth_password(
             $connection,
-            $this->config['samba']['admin_user'],
-            $this->config['samba']['admin_password']
+            $this->config['samba']['ssh_user'],
+            $this->config['samba']['ssh_password']
         );
         if (!$authResult) {
-            throw new Exception("Falha na autenticação SSH para o usuário: {$this->config['samba']['admin_user']} no host: {$this->config['samba']['host']}");
+            throw new Exception("Falha na autenticação SSH para o usuário: {$this->config['samba']['ssh_user']} no host: {$this->config['samba']['host']}");
         }
 
         $stream = ssh2_exec($connection, $command);
